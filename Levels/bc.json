@@ -1,0 +1,12 @@
+{
+    "id": "pg",
+    "name": "core",
+    "description": "nathan pesta",
+    "author": "Nesa",
+    "menuPriority": 0,
+    "selectable": true,
+    "styleId": "bc_menu",
+    "musicId": "pg",
+    "luaFile": "Scripts/bc/bc.lua",
+    "difficultyMults": [0.9999, 1.0001]
+}

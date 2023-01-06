@@ -1,0 +1,11 @@
+{
+    "id": "testing",
+    "name": "testing",
+    "description": "uhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhohuhoh",
+    "author": "Nesa",
+    "menuPriority": 1,
+    "selectable": true,
+    "styleId": "bc_kesd2",
+    "musicId": "bct",
+    "luaFile": "Scripts/bc/shadertesting.lua"
+}
