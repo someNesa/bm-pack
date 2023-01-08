@@ -28,7 +28,7 @@ void main() {
             a = tan(theta);
             vec2 v = normalize(vec2(1, a));
             float d = length(v*dot(st, v) - st);
-            if(d < 0.0015) {
+            if(d < 0.001) {
                 color = lascol;
                 break;
             }
@@ -40,7 +40,7 @@ void main() {
             a = tan(theta);
             vec2 v = normalize(vec2(1, a));
             float d = length(v*dot(st, v) - st);
-            if(d < 0.0015) {
+            if(d < 0.001) {
                 color = lascol;
                 break;
             }
@@ -55,7 +55,7 @@ void main() {
             a = tan(theta);
             vec2 v = normalize(vec2(1, a));
             float d = length(v*dot(st, v) - st);
-            if(d < 0.0015) {
+            if(d < 0.001) {
                 color = lascol;
                 break;
             }
@@ -67,7 +67,7 @@ void main() {
             a = tan(theta);
             vec2 v = normalize(vec2(1, a));
             float d = length(v*dot(st, v) - st);
-            if(d < 0.0015) {
+            if(d < 0.001) {
                 color = lascol;
                 break;
             }
@@ -81,7 +81,7 @@ void main() {
             a = tan(theta);
             vec2 v = normalize(vec2(1, a));
             float d = length(v*dot(st, v) - st);
-            if(d < 0.0015) {
+            if(d < 0.001) {
                 color = lascol;
                 break;
             }
@@ -93,7 +93,7 @@ void main() {
             a = tan(theta);
             vec2 v = normalize(vec2(1, a));
             float d = length(v*dot(st, v) - st);
-            if(d < 0.0015) {
+            if(d < 0.001) {
                 color = lascol;
                 break;
             }
@@ -108,7 +108,7 @@ void main() {
             a = tan(theta);
             vec2 v = normalize(vec2(1, a));
             float d = length(v*dot(st, v) - st);
-            if(d < 0.0015) {
+            if(d < 0.001) {
                 color = lascol;
                 break;
             }
@@ -120,7 +120,7 @@ void main() {
             a = tan(theta);
             vec2 v = normalize(vec2(1, a));
             float d = length(v*dot(st, v) - st);
-            if(d < 0.0015) {
+            if(d < 0.001) {
                 color = lascol;
                 break;
             }

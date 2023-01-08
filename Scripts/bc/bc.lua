@@ -205,6 +205,7 @@ perspective = shdr_getShaderId("bc_perspective.frag")
 firstflashes = shdr_getShaderId("bc_firstflashes.frag")
 redglow = shdr_getShaderId("bc_redglow.frag")
 screenpulse = shdr_getShaderId("bc_screenpulse.frag")
+trilattice = shdr_getShaderId("bc_trilattice.frag")
 
 shaderCols = 0
 
@@ -309,8 +310,7 @@ function onLoad()
     e_eval([[l_setSpeedMult(l_getSpeedMult()+0.6)]])
     e_eval([[t_clear()]])
     e_eval([[u_clearWalls()]])
-    e_eval([[s_setStyle("bc_kespre2")]])
-	e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, gridshade)]])
+	e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, trilattice)]])
 
 
     e_waitUntilS(21.004) --slightly faster
@@ -326,7 +326,6 @@ function onLoad()
 
 
     e_waitUntilS(41.151) --stop
-    e_eval([[s_setStyle("bc_kespre2")]])
     e_eval([[l_setRotationSpeed(0.5)]])
     e_eval([[t_clear()]])
     e_eval([[u_clearWalls()]])
@@ -578,6 +577,11 @@ function onRenderStage(rs) --cringe
 	shdr_setUniformFVec2(gridshade, "u_resolution", u_getWidth(), u_getHeight())
 	shdr_setUniformF(gridshade, "u_rotation", math.rad(l_getRotation()))
 	shdr_setUniformF(gridshade, "u_skew", s_get3dSkew())
+
+	shdr_setUniformFVec2(trilattice, "u_resolution", u_getWidth(), u_getHeight())
+	shdr_setUniformF(trilattice, "u_time", l_getLevelTime())
+	shdr_setUniformF(trilattice, "u_rotation", math.rad(l_getRotation()))
+	shdr_setUniformF(trilattice, "u_skew", s_get3dSkew())
 
 	shdr_setUniformFVec2(gridgraid, "u_resolution", u_getWidth(), u_getHeight())
 	shdr_setUniformF(gridgraid, "u_time", l_getLevelTime())
