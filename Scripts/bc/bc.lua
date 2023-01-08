@@ -90,7 +90,6 @@ function hardPulse()
 
 end
 function slowPulse()
-    BPM = BPM / 2
     l_setManualPulseControl(true)
     l_setPulse(120)
     l_setManualPulseControl(false)
@@ -189,11 +188,11 @@ loopcount = 1
 nextLoop = 0.35
 noWallSpawn = false
 
-skewDirection = false
-skewRate = 0.0
-skewMax = 1.0
-skewMin = 2.0
-skewInput = 1.3
+skewDirection = true
+skewPeriod = 0.0
+skewMax = 2.0
+skewMin = 0.0
+skewInput = 0.0
 
 --shader files
 gridshade = shdr_getShaderId("bc_grid.frag")
@@ -276,7 +275,7 @@ function onLoad()
 	e_eval([[shdr_setActiveFragmentShader(RenderStage.WALLQUADS, screenpulse)]])
 	e_eval([[shdr_setActiveFragmentShader(RenderStage.CAPTRIS, screenpulse)]])
     e_eval([[l_setRotationSpeed(0.05)]])
-    e_eval([[hardPulse()]])
+    e_eval([[stopPulse(l_getRadiusMin())]])
 
     e_waitUntilS(12.432) --stop
 	e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, blackshade)]])
@@ -302,16 +301,15 @@ function onLoad()
     e_eval([[u_setFlashEffect(255)]])
     --everything below here needs to be redone
     e_waitUntilS(14.136) --main melody intro
+    --e_eval([[shapeChange(4, "sSqu")]])
     e_eval([[noWallSpawn = false]])
     e_eval([[u_setFlashEffect(255)]])
     e_eval([[l_setRotationSpeed(-0.4)]])
     e_eval([[u_setFlashEffect(70)]])
-    --e_eval([[shapeChange(4, "sSqu")]])
     e_eval([[l_setSpeedMult(l_getSpeedMult()+0.6)]])
     e_eval([[t_clear()]])
     e_eval([[u_clearWalls()]])
     e_eval([[s_setStyle("bc_kespre2")]])
-	e_eval([[s_set3dSkew(0.5)]])
 	e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, gridshade)]])
 
 
@@ -323,7 +321,8 @@ function onLoad()
     e_eval([[u_setFlashEffect(255)]])
     e_eval([[l_setSpeedMult(l_getSpeedMult()+0.3)]])
     e_eval([[l_setRotationSpeed(-0.5)]])
-    e_eval([[skewRate = 0.08]])
+    e_eval([[skewPeriod = 1]])
+    e_eval([[slowPulse()]])
 
 
     e_waitUntilS(41.151) --stop
@@ -338,6 +337,7 @@ function onLoad()
     e_waitUntilS(41.578-(60/140)*0.75)
     e_eval([[u_setFlashEffect(255)]])
     e_waitUntilS(41.578-(60/140)*0.5)
+    e_eval([[repulse = true]])
     e_eval([[u_setFlashEffect(255)]])
     e_waitUntilS(41.578-(60/140)*0.25)
     e_waitUntilS(41.578) --kiai 1 
@@ -368,6 +368,8 @@ function onLoad()
     e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, perspective)]])
     e_eval([[t_clear()]])
     e_eval([[u_clearWalls()]])
+    e_eval([[skewPeriod = 0]])
+    e_eval([[skewInput = 0]])
 
     --some kind of wind down at 54-55.6s
     e_waitUntilS(55.1)
@@ -520,33 +522,42 @@ function onUpdate(mFrameTime)
         --on beat events
         ticker = true
 
-        --pulse starter
+        --pulse starter on beat
         if respulse then
             hardPulse()
             respulse = false
         end
 
         --event specific on beat
-		if kiai2 then
+		if kiai2 then --light pulse flash
             u_setFlashEffect(50)
 		end
+
         interBeatCounter = 0
         beatCount = beatCount + 1
     else
         ticker = false
     end
 
-    if noWallSpawn then
+    if noWallSpawn then --pauses wall spawning
         u_clearWalls()
     end
+    
+    if skewPeriod == 0 then
+        skewRate = 0
+    else
+        skewRate = ((skewMax-skewMin)/(60.0/140))/240
+        skewRate = skewRate * skewPeriod
+    end
 
-    if frameCounter % 240 == 0 then
+    --manual skew control
+    if skewInput<skewMin or skewInput>skewMax then
 		skewDirection = not skewDirection
 	end
 	if skewDirection then
-		skewInput = skewRate + 0.00
+		skewInput = skewInput + skewRate
 	else
-		skewInput = skewRate - 0.00
+		skewInput = skewInput - skewRate
 	end
     s_set3dSkew(skewInput)
 
