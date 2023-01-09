@@ -206,6 +206,7 @@ firstflashes = shdr_getShaderId("bc_firstflashes.frag")
 redglow = shdr_getShaderId("bc_redglow.frag")
 screenpulse = shdr_getShaderId("bc_screenpulse.frag")
 trilattice = shdr_getShaderId("bc_trilattice.frag")
+trilatticecolors = shdr_getShaderId("bc_trilatticecolors.frag")
 
 shaderCols = 0
 
@@ -310,6 +311,7 @@ function onLoad()
     e_eval([[l_setSpeedMult(l_getSpeedMult()+0.6)]])
     e_eval([[t_clear()]])
     e_eval([[u_clearWalls()]])
+    e_eval([[slowPulse()]])
 	e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, trilattice)]])
 
 
@@ -317,12 +319,15 @@ function onLoad()
 
     e_waitUntilS(26.083) --stop
     e_eval([[respulse = true]])
+    e_eval([[l_setRotationSpeed(0)]])
     e_waitUntilS(27.868) --kiai but not really (low melodic)
     e_eval([[u_setFlashEffect(255)]])
     e_eval([[l_setSpeedMult(l_getSpeedMult()+0.3)]])
     e_eval([[l_setRotationSpeed(-0.5)]])
     e_eval([[skewPeriod = 1]])
     e_eval([[slowPulse()]])
+	e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, trilatticecolors)]])
+	e_eval([[shdr_setActiveFragmentShader(RenderStage.WALLQUADS, screenpulse)]])
 
 
     e_waitUntilS(41.151) --stop
@@ -340,6 +345,7 @@ function onLoad()
     e_eval([[u_setFlashEffect(255)]])
     e_waitUntilS(41.578-(60/140)*0.25)
     e_waitUntilS(41.578) --kiai 1 
+	e_eval([[shdr_resetActiveFragmentShader(RenderStage.WALLQUADS)]])
     e_eval([[
         if u_getDifficultyMult() == 1.0 then
             l_setSpeedMult(4.0)
@@ -582,6 +588,12 @@ function onRenderStage(rs) --cringe
 	shdr_setUniformF(trilattice, "u_time", l_getLevelTime())
 	shdr_setUniformF(trilattice, "u_rotation", math.rad(l_getRotation()))
 	shdr_setUniformF(trilattice, "u_skew", s_get3dSkew())
+
+	shdr_setUniformFVec2(trilatticecolors, "u_resolution", u_getWidth(), u_getHeight())
+	shdr_setUniformF(trilatticecolors, "u_time", l_getLevelTime())
+	shdr_setUniformF(trilatticecolors, "u_rotation", math.rad(l_getRotation()))
+	shdr_setUniformF(trilatticecolors, "u_skew", s_get3dSkew())
+	shdr_setUniformI(trilatticecolors, "u_beat", beatCount)
 
 	shdr_setUniformFVec2(gridgraid, "u_resolution", u_getWidth(), u_getHeight())
 	shdr_setUniformF(gridgraid, "u_time", l_getLevelTime())
