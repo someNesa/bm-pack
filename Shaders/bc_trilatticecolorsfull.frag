@@ -9,7 +9,6 @@ uniform vec2 u_resolution;
 uniform float u_time;
 uniform float u_rotation;
 uniform float u_skew;
-uniform int u_beat;
 
 bool tolerance(float coord, float spacing, float tol) {
     return mod(coord+(tol/2.0), spacing) < tol;
@@ -56,52 +55,27 @@ void main() {
     
     vec3 beatColor = 1.0 + 0.5*cos(u_time*2.0+st.xyx+vec3(0,2,4));
     float tol1 = 0.0025;
-    float tol2 = 0.0025;
-    float tol3 = 0.0025;
-    int beatPick = u_beat;
-    if(mod(float(beatPick), 3.0) == 2.0) {
         tol1 += normalDist(1.0, dist, thickness)/300.0;
-    }
     if(tolerance(st.y,0.15,tol1)) {
-        if(mod(float(beatPick), 3.0) == 2.0) {
             color = normalDist(beatColor, dist, brightness);
-            tol2 = -2.0;
-            tol3 = -2.0;
-        }
-        else {
-            color = vec3(1.0, 1.0, 1.0);
-        }
     }
     s = sin(pi/3.0);
     c = cos(pi/3.0);
     rot = mat2(c, s, -s, c);
     st = st * rot;
-    if(mod(float(beatPick), 3.0) == 1.0) {
+    float tol2 = 0.0025;
         tol2 += normalDist(1.0, dist, thickness)/300.0;
-    }
     if(tolerance(st.y,0.15,tol2)) {
-        if(mod(float(beatPick), 3.0) == 1.0) {
             color = normalDist(beatColor, dist, brightness);
-            tol3 = -2.0;
-        }
-        else {
-            color = vec3(1.0, 1.0, 1.0);
-        }
     }
     s = sin(pi/3.0);
     c = cos(pi/3.0);
     rot = mat2(c, s, -s, c);
     st = st * rot;
-    if(mod(float(beatPick), 3.0) == 0.0) {
+    float tol3 = 0.0025;
         tol3 += normalDist(1.0, dist, thickness)/300.0;
-    }
     if(tolerance(st.y,0.15,tol3)) {
-        if(mod(float(beatPick), 3.0) == 0.0) {
             color = normalDist(beatColor, dist, brightness);
-        }
-        else {
-            color = vec3(1.0, 1.0, 1.0);
-        }
     }
     gl_FragColor = vec4(color, 1.0);
 }

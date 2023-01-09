@@ -189,7 +189,7 @@ nextLoop = 0.35
 noWallSpawn = false
 
 skewDirection = true
-skewPeriod = 0.0
+skewFrequency = 0.0
 skewMax = 2.0
 skewMin = 0.0
 skewInput = 0.0
@@ -202,11 +202,13 @@ blackshade = shdr_getShaderId("bc_black.frag")
 blackflash = shdr_getShaderId("bc_blackflash.frag")
 whiteflash = shdr_getShaderId("bc_whiteflash.frag")
 perspective = shdr_getShaderId("bc_perspective.frag")
+prefirstflashes = shdr_getShaderId("bc_prefirstflashes.frag")
 firstflashes = shdr_getShaderId("bc_firstflashes.frag")
 redglow = shdr_getShaderId("bc_redglow.frag")
 screenpulse = shdr_getShaderId("bc_screenpulse.frag")
 trilattice = shdr_getShaderId("bc_trilattice.frag")
 trilatticecolors = shdr_getShaderId("bc_trilatticecolors.frag")
+trilatticecolorsfull = shdr_getShaderId("bc_trilatticecolorsfull.frag")
 
 shaderCols = 0
 
@@ -263,6 +265,7 @@ function onLoad()
     --offset: 253 ms
     --1 beat: (60/140)
     e_eval([[t_waitS(0.428)]])
+	e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, prefirstflashes)]])
     e_eval([[u_setFlashEffect(255)]])
     e_waitUntilS((60/140)*0.25)
     e_eval([[u_setFlashEffect(255)]])
@@ -273,12 +276,12 @@ function onLoad()
     e_waitUntilS((60/140))
     e_eval([[u_setFlashEffect(255)]])
     e_eval([[s_setStyle("bc_ppd1")]])
-	e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, firstflashes)]])
 	e_eval([[shdr_setActiveFragmentShader(RenderStage.WALLQUADS, screenpulse)]])
 	e_eval([[shdr_setActiveFragmentShader(RenderStage.CAPTRIS, screenpulse)]])
     e_eval([[l_setRotationSpeed(0.05)]])
     e_eval([[stopPulse(l_getRadiusMin())]])
-
+    e_waitUntilS((60/140)*17)
+	e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, firstflashes)]])
     e_waitUntilS(12.432) --stop
 	e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, blackshade)]])
     e_eval([[l_setRotationSpeed(0)]])
@@ -301,9 +304,7 @@ function onLoad()
     e_eval([[u_setFlashEffect(255)]])
     e_waitUntilS(14.136-(60/140)*0.25)
     e_eval([[u_setFlashEffect(255)]])
-    --everything below here needs to be redone
     e_waitUntilS(14.136) --main melody intro
-    --e_eval([[shapeChange(4, "sSqu")]])
     e_eval([[noWallSpawn = false]])
     e_eval([[u_setFlashEffect(255)]])
     e_eval([[l_setRotationSpeed(-0.4)]])
@@ -316,18 +317,23 @@ function onLoad()
 
 
     e_waitUntilS(21.004) --slightly faster
+	e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, trilatticecolors)]])
 
     e_waitUntilS(26.083) --stop
+	e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, trilattice)]])
     e_eval([[respulse = true]])
     e_eval([[l_setRotationSpeed(0)]])
+    e_waitUntilS(26.083+(60/140)) --transition
+	e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, trilatticecolorsfull)]])
+	e_eval([[shdr_setActiveFragmentShader(RenderStage.WALLQUADS, screenpulse)]])
     e_waitUntilS(27.868) --kiai but not really (low melodic)
+	e_eval([[shdr_resetActiveFragmentShader(RenderStage.WALLQUADS)]])
     e_eval([[u_setFlashEffect(255)]])
     e_eval([[l_setSpeedMult(l_getSpeedMult()+0.3)]])
     e_eval([[l_setRotationSpeed(-0.5)]])
-    e_eval([[skewPeriod = 1]])
+    e_eval([[skewFrequency = 2]])
     e_eval([[slowPulse()]])
-	e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, trilatticecolors)]])
-	e_eval([[shdr_setActiveFragmentShader(RenderStage.WALLQUADS, screenpulse)]])
+	e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, blackshade)]])
 
 
     e_waitUntilS(41.151) --stop
@@ -373,7 +379,7 @@ function onLoad()
     e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, perspective)]])
     e_eval([[t_clear()]])
     e_eval([[u_clearWalls()]])
-    e_eval([[skewPeriod = 0]])
+    e_eval([[skewFrequency = 0]])
     e_eval([[skewInput = 0]])
 
     --some kind of wind down at 54-55.6s
@@ -548,11 +554,11 @@ function onUpdate(mFrameTime)
         u_clearWalls()
     end
     
-    if skewPeriod == 0 then
+    if skewFrequency == 0 then
         skewRate = 0
     else
         skewRate = ((skewMax-skewMin)/(60.0/140))/240
-        skewRate = skewRate * skewPeriod
+        skewRate = skewRate * skewFrequency
     end
 
     --manual skew control
@@ -574,6 +580,12 @@ function onRenderStage(rs) --cringe
 	shdr_setUniformF(screenpulse, "u_time", l_getLevelTime())
 	shdr_setUniformFVec2(redglow, "u_resolution", u_getWidth(), u_getHeight())
 
+	shdr_setUniformFVec2(prefirstflashes, "u_resolution", u_getWidth(), u_getHeight())
+	shdr_setUniformF(prefirstflashes, "u_time", l_getLevelTime())
+	shdr_setUniformF(prefirstflashes, "u_rotation", math.rad(l_getRotation()))
+	shdr_setUniformF(prefirstflashes, "u_skew", s_get3dSkew())
+	shdr_setUniformI(prefirstflashes, "u_beat", beatCount)
+
 	shdr_setUniformFVec2(firstflashes, "u_resolution", u_getWidth(), u_getHeight())
 	shdr_setUniformF(firstflashes, "u_time", l_getLevelTime())
 	shdr_setUniformF(firstflashes, "u_rotation", math.rad(l_getRotation()))
@@ -594,6 +606,11 @@ function onRenderStage(rs) --cringe
 	shdr_setUniformF(trilatticecolors, "u_rotation", math.rad(l_getRotation()))
 	shdr_setUniformF(trilatticecolors, "u_skew", s_get3dSkew())
 	shdr_setUniformI(trilatticecolors, "u_beat", beatCount)
+
+	shdr_setUniformFVec2(trilatticecolorsfull, "u_resolution", u_getWidth(), u_getHeight())
+	shdr_setUniformF(trilatticecolorsfull, "u_time", l_getLevelTime())
+	shdr_setUniformF(trilatticecolorsfull, "u_rotation", math.rad(l_getRotation()))
+	shdr_setUniformF(trilatticecolorsfull, "u_skew", s_get3dSkew())
 
 	shdr_setUniformFVec2(gridgraid, "u_resolution", u_getWidth(), u_getHeight())
 	shdr_setUniformF(gridgraid, "u_time", l_getLevelTime())
