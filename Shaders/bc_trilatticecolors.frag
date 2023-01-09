@@ -9,7 +9,6 @@ uniform vec2 u_resolution;
 uniform float u_time;
 uniform float u_rotation;
 uniform float u_skew;
-uniform int u_beat;
 
 bool tolerance(float coord, float spacing, float tol) {
     return mod(coord+(tol/2.0), spacing) < tol;
@@ -58,7 +57,7 @@ void main() {
     float tol1 = 0.0025;
     float tol2 = 0.0025;
     float tol3 = 0.0025;
-    int beatPick = u_beat;
+    int beatPick = int(u_time/(60.0/140.0));
     if(mod(float(beatPick), 3.0) == 2.0) {
         tol1 += normalDist(1.0, dist, thickness)/300.0;
     }

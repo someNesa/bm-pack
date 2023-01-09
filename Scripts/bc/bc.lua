@@ -327,6 +327,7 @@ function onLoad()
 	e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, trilatticecolorsfull)]])
 	e_eval([[shdr_setActiveFragmentShader(RenderStage.WALLQUADS, screenpulse)]])
     e_waitUntilS(27.868) --kiai but not really (low melodic)
+    e_eval([[kiai1 = true]])
 	e_eval([[shdr_resetActiveFragmentShader(RenderStage.WALLQUADS)]])
     e_eval([[u_setFlashEffect(255)]])
     e_eval([[l_setSpeedMult(l_getSpeedMult()+0.3)]])
@@ -337,6 +338,7 @@ function onLoad()
 
 
     e_waitUntilS(41.151) --stop
+    e_eval([[kiai1 = false]])
     e_eval([[l_setRotationSpeed(0.5)]])
     e_eval([[t_clear()]])
     e_eval([[u_clearWalls()]])
@@ -350,7 +352,7 @@ function onLoad()
     e_eval([[repulse = true]])
     e_eval([[u_setFlashEffect(255)]])
     e_waitUntilS(41.578-(60/140)*0.25)
-    e_waitUntilS(41.578) --kiai 1 
+    e_waitUntilS(41.578) --kiai 2 
 	e_eval([[shdr_resetActiveFragmentShader(RenderStage.WALLQUADS)]])
     e_eval([[
         if u_getDifficultyMult() == 1.0 then
@@ -540,6 +542,9 @@ function onUpdate(mFrameTime)
         end
 
         --event specific on beat
+		if kiai1 then --light pulse flash
+            skewInput = 0
+		end
 		if kiai2 then --light pulse flash
             u_setFlashEffect(50)
 		end
@@ -557,12 +562,12 @@ function onUpdate(mFrameTime)
     if skewFrequency == 0 then
         skewRate = 0
     else
-        skewRate = ((skewMax-skewMin)/(60.0/140))/240
+        skewRate = ((skewMax-skewMin)/(60.0/140.0))/240.0
         skewRate = skewRate * skewFrequency
     end
 
     --manual skew control
-    if skewInput<skewMin or skewInput>skewMax then
+    if skewInput<=skewMin or skewInput>=skewMax then
 		skewDirection = not skewDirection
 	end
 	if skewDirection then
@@ -601,16 +606,15 @@ function onRenderStage(rs) --cringe
 	shdr_setUniformF(trilattice, "u_rotation", math.rad(l_getRotation()))
 	shdr_setUniformF(trilattice, "u_skew", s_get3dSkew())
 
-	shdr_setUniformFVec2(trilatticecolors, "u_resolution", u_getWidth(), u_getHeight())
-	shdr_setUniformF(trilatticecolors, "u_time", l_getLevelTime())
-	shdr_setUniformF(trilatticecolors, "u_rotation", math.rad(l_getRotation()))
-	shdr_setUniformF(trilatticecolors, "u_skew", s_get3dSkew())
-	shdr_setUniformI(trilatticecolors, "u_beat", beatCount)
-
 	shdr_setUniformFVec2(trilatticecolorsfull, "u_resolution", u_getWidth(), u_getHeight())
 	shdr_setUniformF(trilatticecolorsfull, "u_time", l_getLevelTime())
 	shdr_setUniformF(trilatticecolorsfull, "u_rotation", math.rad(l_getRotation()))
 	shdr_setUniformF(trilatticecolorsfull, "u_skew", s_get3dSkew())
+
+	shdr_setUniformFVec2(trilatticecolors, "u_resolution", u_getWidth(), u_getHeight())
+	shdr_setUniformF(trilatticecolors, "u_time", l_getLevelTime())
+	shdr_setUniformF(trilatticecolors, "u_rotation", math.rad(l_getRotation()))
+	shdr_setUniformF(trilatticecolors, "u_skew", s_get3dSkew())
 
 	shdr_setUniformFVec2(gridgraid, "u_resolution", u_getWidth(), u_getHeight())
 	shdr_setUniformF(gridgraid, "u_time", l_getLevelTime())
