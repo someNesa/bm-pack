@@ -1,0 +1,14 @@
+{
+    "id": "pagoda",
+
+    "file_name": "pagoda.ogg",
+
+    "name": "Pagoda",
+    "album": "",
+    "author": "Xomu & Amidst",
+
+    "segments":
+    [
+        { "time": 0 }
+    ]
+}

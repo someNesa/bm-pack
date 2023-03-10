@@ -1,0 +1,12 @@
+{
+    "id": "nvl",
+    "name": "Not Verdant Landscape",
+    "description": "We also have pagodas",
+    "author": "Nesa",
+    "menuPriority": 1,
+    "selectable": true,
+    "styleId": "pagoda_menu",
+    "musicId": "pagoda",
+    "luaFile": "Scripts/pagoda/pagoda.lua",
+    "difficultyMults": [0.9999, 1.0001]
+}
