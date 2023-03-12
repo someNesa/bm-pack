@@ -20,8 +20,8 @@
 	"3D_pulse_speed": 0.0,
 	
 	// Main color
-	"main": { "main": true, "dynamic": false, "value": [0, 116, 232, 255], "pulse": [0, 0, 0, 0] },
-	"cap_color": { "legacy": false, "value": [0, 54, 107, 255], "pulse": [0, 0, 0, 0]},
+	"main": { "main": true, "dynamic": false, "value": [200, 200, 200, 255], "pulse": [0, 0, 0, 0] },
+	"cap_color": { "legacy": false, "value": [20, 20, 20, 255], "pulse": [0, 0, 0, 0]},
 
 	// Background colors
 	"colors":

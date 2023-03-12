@@ -235,6 +235,7 @@ function onRenderStage(rs) --cringe
 	shdr_setUniformF(edges, "u_rotation", math.rad(l_getRotation()))
 	shdr_setUniformF(edges, "u_skew", s_get3dSkew())
 	shdr_setUniformF(edges, "u_time", l_getLevelTime())
+	shdr_setUniformF(edges, "u_player", u_getPlayerAngle())
 
 	shdr_setUniformFVec2(edgesWall, "u_resolution", u_getWidth(), u_getHeight())
 	shdr_setUniformF(edgesWall, "u_rotation", math.rad(l_getRotation()))
