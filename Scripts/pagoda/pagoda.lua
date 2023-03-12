@@ -143,13 +143,13 @@ skewInput = 0.0
 
 -- onInit is an hardcoded function that is called when the level is first loaded
 function onInit()
-    l_setSpeedMult(1.5)
+    l_setSpeedMult(2.5)
 
-    l_setSpeedInc(0)
+	l_setSpeedInc(0.125)
     l_setSpeedMax(99999)
-    l_setRotationSpeed(0.025)
+    l_setRotationSpeed(-0.5)
     l_setRotationSpeedMax(9999)
-    l_setRotationSpeedInc(0)
+    l_setRotationSpeedInc(0.1)
 
     l_setDelayMult(1.10)
     
@@ -157,10 +157,10 @@ function onInit()
     l_setDelayInc(0)
     l_setFastSpin(1.6)
     l_setSides(6)
-    l_setSidesMin(3)
-    l_setSidesMax(99)
+    l_setSidesMin(6)
+    l_setSidesMax(6)
 
-    l_setIncTime(99999999999)
+    l_setIncTime(30)
 
     l_setPulseInitialDelay(0.99999)
     l_setPulseMin(60)
@@ -177,71 +177,26 @@ end
 
 edges = shdr_getShaderId("pagoda_edges.frag")
 edgesWall = shdr_getShaderId("pagoda_edges_wall.frag")
---event controls
-desync = false
-screenPulse = false
+desync = true
+screenPulse = true
 
 -- onLoad is an hardcoded function that is called when the level is started/restarted
 function onLoad()
-    --offset: 0 ms wow!
-    --1 beat: (60/120)
-    e_eval([[stopPulse(80)]])
-    e_eval([[skewInput = 0.2]])
     e_eval([[s_setStyle("pagoda_lower")]])
-    e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, edges)]])
-
-    --drum starts
-    e_waitUntilS(16.030)
     e_eval([[slowPulse()]])
-    e_eval([[l_setSpeedMult(2.5)]])
+    e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, edges)]])
 	e_eval([[shdr_setActiveFragmentShader(RenderStage.WALLQUADS, edgesWall)]])
-	
-    --low build to first drop
-    e_waitUntilS(32.027)
-    --drum
-    e_waitUntilS(40.027)
-    --drum offbeat
-    e_waitUntilS(44.027)
-    --break
-    e_waitUntilS(46.035)
-    --kick
-    e_waitUntilS(47.529)
-
-    --kiai
-    e_waitUntilS(48.030)
-    e_eval([[desync = true]])
-    e_eval([[l_setRotationSpeed(-0.5)]])
-
-    e_waitUntilS(64.010)
-    e_eval([[l_setRotationSpeed(1.0)]])
-
-    e_waitUntilS(300)
-    e_messageAdd("Level complete!", 300)
-    e_eval([[t_kill()]])
 end
 
 -- onStep is an hardcoded function that is called when the level timeline is empty
 -- onStep should contain your pattern spawning logic
 function onStep()
-    if(cPool == "sHex") then
-        if index > #sHexKeys then
-            index = 1
-            shuffle(sHexKeys)
-        end
+    if index > #sHexKeys then
+        index = 1
+        shuffle(sHexKeys)
+    end
     addPattern(sHexKeys[index])
     index = index + 1
-
-end
-if(cPool == "bOnlyHex") then
-    if index > #bOnlyHexKeys then
-        index = 1
-        shuffle(bOnlyHexKeys)
-    end
-
-    addPattern(bOnlyHexKeys[index])
-    index = index + 1
-
-end
 end
 
 -- onIncrement is an hardcoded function that is called when the level difficulty is incremented
@@ -260,39 +215,15 @@ function onUpdate(mFrameTime)
         loopcount = loopcount + 1
         nextLoop = loopcount * (60/BPM) -- bpm = BPM
 
-        --on beat events
-        if screenPulse then
-
-        end
 
         interBeatCounter = 0
         beatCount = beatCount + 1
     end
     
-    if desync then
-        if frameCounter % 2 == 0 then
-            s_set3dSkew(-1.4)
-        else
-            s_set3dSkew(0.4)
-        end
+    if frameCounter % 2 == 0 then
+        s_set3dSkew(-2.4)
     else
-        if skewFrequency == 0 then
-            skewRate = 0
-        else
-            skewRate = ((skewMax-skewMin)/(60.0/BPM))/240.0
-            skewRate = skewRate * skewFrequency
-        end
-
-        --manual skew control
-        if skewInput<=skewMin or skewInput>=skewMax then
-            skewDirection = not skewDirection
-        end
-        if skewDirection then
-            skewInput = skewInput + skewRate
-        else
-            skewInput = skewInput - skewRate
-        end
-        s_set3dSkew(skewInput)
+        s_set3dSkew(0.4)
     end
 
     frameCounter = frameCounter + 1
@@ -303,10 +234,10 @@ function onRenderStage(rs) --cringe
 	shdr_setUniformFVec2(edges, "u_resolution", u_getWidth(), u_getHeight())
 	shdr_setUniformF(edges, "u_rotation", math.rad(l_getRotation()))
 	shdr_setUniformF(edges, "u_skew", s_get3dSkew())
+	shdr_setUniformF(edges, "u_time", l_getLevelTime())
 
 	shdr_setUniformFVec2(edgesWall, "u_resolution", u_getWidth(), u_getHeight())
 	shdr_setUniformF(edgesWall, "u_rotation", math.rad(l_getRotation()))
 	shdr_setUniformF(edgesWall, "u_skew", s_get3dSkew())
 	shdr_setUniformF(edgesWall, "u_time", l_getLevelTime())
-	shdr_setUniformF(edgesWall, "u_bpm", BPM)
 end
