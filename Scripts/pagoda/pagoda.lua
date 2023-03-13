@@ -220,7 +220,7 @@ function onUpdate(mFrameTime)
         beatCount = beatCount + 1
     end
     
-    if frameCounter % 2 == 0 then
+    if frameCounter % 8 < 4 then
         s_set3dSkew(-2.4)
     else
         s_set3dSkew(0.4)

@@ -87,8 +87,8 @@ void main() {
     
     d = min(d, abs(st.x)); //checks line where tan() is undefined
     
-    color += squareVec3(radialColor * (step(d, tolerance)) * (radialColor, beatTime, 5.0));
-    effectCounter += step(d, tolerance); //adds 1 if the effect is applied
+    //color += squareVec3(radialColor * (step(d, tolerance)) * (radialColor, beatTime, 5.0));
+    //effectCounter += step(d, tolerance); //adds 1 if the effect is applied
     
     
     //background triangles
@@ -118,10 +118,7 @@ void main() {
     color += squareVec3(pulseColor) * nBeatToggle * pow(expStep(beatTime, 1.0, 1.0) * expStep(vertDist, 5.0, 1.0), 2.0);
     effectCounter += 1.0 * nBeatToggle; //adds 1 if the effect is applied
     
-    //player lazer
-    v = normalize(vec2(1, tan(u_player)));
-    d = min(d, length(v*dot(st, v) - st));
-    tolerance = 0.007;
+
     
     //add all effects together
     gl_FragColor = vec4(sqrt(color/effectCounter),1.0);
