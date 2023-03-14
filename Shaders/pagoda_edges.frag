@@ -60,6 +60,8 @@ void main() {
     float c = cos(u_rotation);
     mat2 rot = mat2(c, s / skewmult, -s, c / skewmult);
     vec2 sts = st;
+    float bgRotation = u_time*2.0*pi;
+    vec2 str = st * mat2(cos(bgRotation), sin(bgRotation) / skewmult, -sin(bgRotation), cos(bgRotation) / skewmult);
     st = st * rot;
     vec3 color = vec3(0.0);
     
@@ -74,39 +76,32 @@ void main() {
     //the hue to base effects on (based on the default hue cycle in shadertoy)
     vec3 hue = vec3(0.5) + 0.5*cos(u_time+vec3(0.0, 2.0, 4.0));
 
-    //radial scan lines
-    float theta = pi/3.0;
-    float angComp = floor((atan(st.y / st.x)) / theta) * theta + (pi/6.0);
-    vec2 v = normalize(vec2(1, tan(angComp)));
-    float d = length(v*dot(st, v) - st);
-    v = normalize(vec2(1, tan(angComp + theta)));
-    d = min(d, length(v*dot(st, v) - st));
+    //spinning laser
+    vec2 v = vec2(1.0, 0.0);
+    float d = length(v*dot(str, v) - str);
     
-    float tolerance = 0.003;
-    vec3 radialColor = vec3(1.0, 1.0, 1.0);
+    vec3 radialColor = vec3(1.6, 1.6, 1.6);
     
-    d = min(d, abs(st.x)); //checks line where tan() is undefined
     
-    //color += squareVec3(radialColor * (step(d, tolerance)) * (radialColor, beatTime, 5.0));
-    //effectCounter += step(d, tolerance); //adds 1 if the effect is applied
+    color += squareVec3(radialColor * min( pow(str.y+1.0,9.0) ,  pow(1.0-str.y,9.0) ));
     
     
     //background triangles
 	vec3 bgTris = hue;
     
-    theta = atan(st.y, st.x)+(pi/6.0);
-    if(mod(theta, pi*2.0/3.0) < pi/3.0) {
-        bgTris = rgb2hsb(bgTris);
-    	bgTris = vec3(bgTris.x, bgTris.y, bgTris.z*0.2);
-        bgTris = hsb2rgb(bgTris);
-    }
+    float theta = atan(st.y, st.x)+(pi/6.0);
+    bgTris = rgb2hsb(bgTris);
+    bgTris = vec3(bgTris.x, bgTris.y, bgTris.z*0.9);
+    float darkener = 1.0 - (step(mod(theta, pi*2.0/3.0), pi/3.0) * 0.6);
+    bgTris = vec3(bgTris.x, bgTris.y, bgTris.z*darkener);
+    bgTris = hsb2rgb(bgTris);
     bgTris *= 1.0-log(0.7+distance(st));
     color += bgTris;
     
     effectCounter += 1.0; //this effect will always be applied
     
     
-    vec3 pulseColor = vec3(1.0,1.0,1.0);
+    vec3 pulseColor = vec3(1.2,1.2,1.2);
     
     //side light pulses
     float sideDist = 0.5*ratio - abs(sts.x);

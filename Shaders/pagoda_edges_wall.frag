@@ -40,11 +40,11 @@ void main() {
     float skewmult = (1.0 / (u_skew + 1.0));
     mat2 rot = mat2(c, s / skewmult, -s, c / skewmult);
     st = st * rot;
-	float br = impulse(12.0, mod(u_time, 0.5)/(0.5)) * step(sign(mod(u_time, 1.0) - 0.5) * -1.0, 0.0) + 0.25;
+	float br = 0.25 + impulse(12.0, mod(u_time, 0.5)/(0.5)) * step(sign(mod(u_time, 1.0) - 0.5) * -1.0, 0.0) + 0.25;
     //based on the default hue cycle in shadertoy
-    vec3 color = vec3(0.5) + 0.5*cos(u_time+vec3(0.0, 2.0, 4.0));
+    vec3 color = vec3(1.0, 1.0, 1.0);
     color = rgb2hsb(color);
-    color = vec3(abs(color.x-0.5), br, br);
+    color = vec3(color.x, 0.0, br);
     color = hsb2rgb(color);
     
     

@@ -177,6 +177,7 @@ end
 
 edges = shdr_getShaderId("pagoda_edges.frag")
 edgesWall = shdr_getShaderId("pagoda_edges_wall.frag")
+cursor = shdr_getShaderId("pagoda_cursor.frag")
 desync = true
 screenPulse = true
 
@@ -186,6 +187,7 @@ function onLoad()
     e_eval([[slowPulse()]])
     e_eval([[shdr_setActiveFragmentShader(RenderStage.BACKGROUNDTRIS, edges)]])
 	e_eval([[shdr_setActiveFragmentShader(RenderStage.WALLQUADS, edgesWall)]])
+	e_eval([[shdr_setActiveFragmentShader(RenderStage.PLAYERTRIS, cursor)]])
 end
 
 -- onStep is an hardcoded function that is called when the level timeline is empty
@@ -236,6 +238,8 @@ function onRenderStage(rs) --cringe
 	shdr_setUniformF(edges, "u_skew", s_get3dSkew())
 	shdr_setUniformF(edges, "u_time", l_getLevelTime())
 	shdr_setUniformF(edges, "u_player", u_getPlayerAngle())
+    
+	shdr_setUniformF(cursor, "u_time", l_getLevelTime())
 
 	shdr_setUniformFVec2(edgesWall, "u_resolution", u_getWidth(), u_getHeight())
 	shdr_setUniformF(edgesWall, "u_rotation", math.rad(l_getRotation()))
